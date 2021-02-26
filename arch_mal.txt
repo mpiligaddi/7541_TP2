@@ -12,3 +12,4 @@ E;Persiano
 E;Parasilo
 P;Gloomer;5;30;20
 P;Vilepluner;20;20;45
+P;Vilepl;20;20;45
