@@ -1,0 +1,41 @@
+G;Gimnasio de Ciudad Celeste;15;5
+L;Misty
+P;Staryu;50;40;50
+P;Starmie;90;50;60
+E;Dominguera Diana
+P;Goldeen;40;50;30
+E;Nadador Luis
+P;Horsea;45;30;20
+P;Shellder;30;20;45
+G;Gimnasio de Ciudad Blanca;10;1
+L;Venusaur
+P;Charmander;0;40;50
+P;Squirtle;0;50;60
+P;Nidoqueen;7;4;50
+P;Nidoking;9;52;30
+E;Metapod
+P;Kakuna;0;50;30
+P;Nido;70;4;50
+P;Zubat;20;5;3
+P;Oddish;30;8;50
+P;Gloom;9;40;3
+P;Paras;50;20;50
+P;Venovat;10;2;40
+E;Beedrill
+P;Ivysaur;5;30;20
+P;Pydgey;0;20;45
+G;Gimnasio de Pikachu;12;2
+L;Pidgetto
+P;Pidgeot;50;40;50
+P;Raichu;90;50;60
+E;Nidoran
+P;Nidorino;40;50;30
+E;Abra
+P;Clefairy;45;30;20
+P;Cleflable;30;20;45
+P;Poliwag;7;4;50
+P;Kadrabra;9;52;30
+P;Tentacool;7;4;50
+P;Machop;70;52;3
+P;Machoke;30;4;5
+P;Machamp;9;5;3

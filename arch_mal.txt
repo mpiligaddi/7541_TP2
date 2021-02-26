@@ -1,0 +1,14 @@
+G;Gimnasio de Ciudad Amarilla;3;3
+L;Arcar
+E;Persian
+P;Goldeen;20;50;30
+E;Paras
+P;Gloom;5;30;20
+P;Vileplune;20;20;45
+G;Gimnasio de Ciudad Gris;10;4
+L;Arcar
+P;Gopal;20;50;30
+E;Persiano
+E;Parasilo
+P;Gloomer;5;30;20
+P;Vilepluner;20;20;45

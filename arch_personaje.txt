@@ -1,0 +1,10 @@
+E;Ash
+P;Pikachu;500;30;30
+P;Squiertlelll;400;20;20
+P;Muk;9;100;2000
+P;Poka;300;40;2
+P;Krabby;3;2;50
+P;Racitare;600;30;30
+P;Popaly;400;80;70
+P;Charmander;300;1;20
+P;Primeape;300;50;40
