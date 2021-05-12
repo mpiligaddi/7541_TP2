@@ -1,0 +1,17 @@
+G;Gimnasio de Ciudad Amarilla;13;3
+L;Arcarine
+P;Diglett;1;1;1
+P;Venomoth;1;1;1
+E;Persian
+P;Goldeen;2000;3000;4000
+E;Paras
+P;Gloom;1;1;1
+G;Gimnasio de Ciudad Gris;14;4
+L;Arcar
+P;Digle;10;40;50
+P;Venomoth;10;50;60
+E;Persiano
+P;Gopal;20;50;30
+E;Parasilo
+P;Gloomer;5;30;20
+P;Vilepluner;20;20;45

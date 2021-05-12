@@ -23,6 +23,8 @@
 #define GIMNASIO_NO_GANADO -1
 #define NO_SIGUE_PARTIDA -1
 #define SIGUE_PARTIDA 1
+#define ARCH_NO_ACEPTADO 0
+#define ARCH_ACEPTADO 1
 const int MENU_INICIO = 1;
 const int MENU_GIMNASIO = 2;
 const int MENU_VICTORIA = 3;
@@ -348,7 +350,7 @@ void mostrar_menu_inicio() {
 	char letra = LETRA_A;
 	heap_t* nuevo_heap = heap_crear(comparador_gimnasios);
 	personaje_t* nuevo_personaje = NULL;
-	gimnasio_t* nuevo_gimnasio = NULL;
+	int resultado = 0;
 	preguntar_letra(&letra, MENU_INICIO);
 
 	while(letra != LETRA_SALIDA) {
@@ -361,8 +363,8 @@ void mostrar_menu_inicio() {
 			else printf(FONDO_NEGRO "Ya cargaste un personaje principal para esta partida..." NORMAL "\n");
 		}
 		else if(letra == LETRA_A) {
-			nuevo_gimnasio = agregar_arch_gimnasio(nuevo_heap);
-			if(nuevo_gimnasio != NULL) printf(FONDO_NEGRO "AVISO: Nuevo gimnasio cargado exitosamente :)" NORMAL "\n");
+			resultado = agregar_arch_gimnasio(nuevo_heap);
+			if(resultado == ARCH_ACEPTADO) printf(FONDO_NEGRO "AVISO: Nuevo gimnasio cargado exitosamente :)" NORMAL "\n");
 			else printf(FONDO_NEGRO "AVISO: Error al cargar el nuevo gimnasio :(" NORMAL "\n");
 		}
 		else if(letra == LETRA_I) {

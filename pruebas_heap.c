@@ -77,7 +77,7 @@ void probar_creacion_heap() {
 
 void probar_insersion_y_eliminacion_de_elementos_heap() {
 
-	pa2m_nuevo_grupo("PRUEBAS DE INSERSION Y ELIMINACION DE ELEMENTOS EN EL HEAP");
+	pa2m_nuevo_grupo("PRUEBAS DE INSERCION Y ELIMINACION DE ELEMENTOS EN EL HEAP");
 	heap_t* heap_con_elementos = heap_crear(comparador_elementos); 
 	heap_t* heap_nuevo_con_elementos = heap_crear(comparador_elementos); 
 

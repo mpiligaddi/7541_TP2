@@ -11,16 +11,6 @@
 #define NO_PASO_PRUEBA -1
 #define NUMERO_CLAVE 5
 
-/*
- * Se deberan implementar las 5 funciones de batalla.
- * Las reglas para decidir al ganador las inventan ustedes
- * 
- * Si el ganador es el primer pokemon, se devolvera 1
- * Si el ganador es el segundo pokemon, se devolvera -1
- * 
- * No habran empates.
- */
-
 // -----------------------------------------------------------------------------------
 // -----------------------------FUNCIONES PRIVADAS------------------------------------
 // -----------------------------------------------------------------------------------
@@ -49,7 +39,7 @@ int formula_defensa(int numero_defensa) {
 
 /*
 Pre: -
-Post: Devuelve 1 si el resultado de la formula es mayor que NUMERO_BAJO o -1 si no.
+Post: Devuelve true si la letra es vocal o false si no.
 */
 
 bool es_letra_vocal(char letra) {

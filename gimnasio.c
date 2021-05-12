@@ -38,6 +38,9 @@
 #define FIN -1
 #define MAX_MEJORA 63
 #define ERROR_AUX 0
+#define ARCH_NO_ACEPTADO_AUX 0
+#define ARCH_ACEPTADO_AUX 1
+#define CANT_MINIMA 6
 #define ARCH_GYM "gym.txt"
 #define ARCH_PERSONAJE "personaje.txt"
 const char LETRA_E_SEC = 'E';
@@ -239,6 +242,24 @@ int leer_entrenador(FILE* arch_gym, gimnasio_t* nuevo_gym) {
 
 /*
 Pre: -
+Post: Lee la informacion de los pokemones del personaje principal y devuelve una cantidad de variables leidas.
+*/
+
+int leer_pkm_personaje_principal(FILE* arch_personaje, personaje_t* nuevo_personaje) {
+	return(fscanf(arch_personaje, FORMATO_POKEMON , nuevo_personaje->pokemon->nombre, &(nuevo_personaje->pokemon->velocidad), &(nuevo_personaje->pokemon->ataque), &(nuevo_personaje->pokemon->defensa)));
+}
+
+/*
+Pre: -
+Post: Lee la informacion del personaje principal y devuelve una cantidad de variables leidas.
+*/
+
+int leer_personaje_principal(FILE* arch_personaje, personaje_t* nuevo_personaje) {
+	return(fscanf(arch_personaje, FORMATO_ENTRENADOR , nuevo_personaje->nombre));
+}
+
+/*
+Pre: -
 Post: Libera la memoria reservada para las listas de pokemones de un entrenador y para el mismo.
 */
 
@@ -290,21 +311,23 @@ void liberar_gimnasio_aux(gimnasio_t* gimnasio) {
 }
 
 /*
-Pre: Recibe un archivo de texto y un heap
+Pre: Recibe un archivo de texto y un heap.
 Post: Lee la informacion del archivo de texto recibido por parametro y carga el gimnasio completo (con toda su informacion) al heap. Tambien carga los pokemones (tanto del lider como de los entrenadores) a su lista correspondiente. Carga todos los entrenadores a una pila. 
+Devuelve 1 si pudo leer exitosamente por lo menos un gimnasio o 0 si no.
 */
 
-gimnasio_t* cargar_gimnasio(char arch_gym[MAX_RUTA], heap_t* heap) {
-	if(!heap) return NULL;
+int cargar_gimnasio(char arch_gym[MAX_RUTA], heap_t* heap) {
+	if(!heap) return 0;
 	FILE* gimnasio = fopen(arch_gym, "r");
 	if(!gimnasio) {
 		printf("El archivo no existe!\n");
-		return NULL;
+		return 0;
 	}
 	gimnasio_t* nuevo_gym = NULL;
-	char inicial;
+	char inicial = LETRA;
 	int i = 0;
 	int cant_agregada = 0;
+	int resultado = ARCH_NO_ACEPTADO_AUX;
 	int leidos = leer_inicial(gimnasio,&inicial);
 	if(inicial == LETRA_G_SEC) {
 		while(leidos > 0) {
@@ -378,10 +401,12 @@ gimnasio_t* cargar_gimnasio(char arch_gym[MAX_RUTA], heap_t* heap) {
 		}
 		else {
 			heap_insertar(heap,nuevo_gym);
+			(cant_agregada)++;
 		}
+		if(cant_agregada > VACIO) resultado = ARCH_ACEPTADO_AUX;
 	}
 	fclose(gimnasio);
-	return nuevo_gym;
+	return resultado;
 }
 
 /*
@@ -417,31 +442,36 @@ personaje_t* cargar_personaje_principal(char arch_personaje[MAX_RUTA]) {
 		return NULL;
 	}
 	personaje_t* nuevo_personaje = NULL;
-	char inicial;
+	char inicial = LETRA;
 	int j = 0;
 	int i = 0;
-	int leidos = fscanf(personaje_principal, FORMATO_INICIAL ,&inicial);
+	int leidos = leer_inicial(personaje_principal,&inicial);
 	if(inicial == LETRA_E_SEC) {
 		nuevo_personaje = crear_personaje();
 		while(leidos > 0) {
 			if(inicial == LETRA_E_SEC) {
-				leidos = fscanf(personaje_principal, FORMATO_ENTRENADOR , nuevo_personaje->nombre);
+				leidos = leer_personaje_principal(personaje_principal,nuevo_personaje);
 			}
 			else if(inicial == LETRA_P_SEC) {
 				nuevo_personaje->pokemon = crear_pokemon();
-				leidos = fscanf(personaje_principal, FORMATO_POKEMON , nuevo_personaje->pokemon->nombre, &(nuevo_personaje->pokemon->velocidad), &(nuevo_personaje->pokemon->ataque), &(nuevo_personaje->pokemon->defensa));
+				leidos = leer_pkm_personaje_principal(personaje_principal,nuevo_personaje);
 				if(i < MAX_PKM_PARA_BATALLA) {
 					lista_insertar_en_posicion(nuevo_personaje->lista_pokemones_para_combatir, nuevo_personaje->pokemon, i);
 				}
 				lista_insertar_en_posicion(nuevo_personaje->lista_pokemones_obtenidos, nuevo_personaje->pokemon, i);
 				i++;
 			}
-			leidos = fscanf(personaje_principal, FORMATO_INICIAL ,&inicial);
+			leidos = leer_inicial(personaje_principal,&inicial);
 			if((leidos > 0) && (inicial != LETRA_P_SEC)) {
 				liberar_personaje(nuevo_personaje);
 				fclose(personaje_principal);
 				return NULL;
 			}
+		}
+		if(inicial != LETRA_P_SEC) {
+			liberar_personaje(nuevo_personaje);
+			fclose(personaje_principal);
+			return NULL;
 		}
 	}
 	fclose(personaje_principal);
@@ -620,7 +650,8 @@ void info_batalla(heap_t* heap_gimnasio,personaje_t* personaje,int* turno_pkm_pe
 
 /*
 Pre: Recibe un pokemon 
-Post: Mejora las habilidades del pokemon sumandole 1 punto extra 
+Post: Mejora las habilidades del pokemon sumandole 1 punto extra.
+Las habilidades se podran mejorar siempre y cuando no hayan superado el maximo 63 puntos agregados. Estos se suman de a uno siempre que el pokemon actual del personaje principal gana una batalla. 
 */
 
 void mejorar_pokemon(pokemon_t* pokemon) {
@@ -628,6 +659,7 @@ void mejorar_pokemon(pokemon_t* pokemon) {
 		(pokemon->velocidad)++;
 		(pokemon->defensa)++;
 		(pokemon->ataque)++;
+		(pokemon->puntos_extra)++;
 	}
 }
 
@@ -732,7 +764,7 @@ int comparador_gimnasios(void* gym_1, void* gym_2) {
 	return 0;
 }
 
-gimnasio_t* agregar_arch_gimnasio(heap_t* heap) {
+int agregar_arch_gimnasio(heap_t* heap) {
 	char arch_gym[100] = ARCH_GYM;
 	printf("Introduzca el nombre del nuevo archivo de gimnasios que desea incluir (Aclaracion: debe ser en formato .txt): \n");
 	scanf(" %s", arch_gym);
@@ -742,8 +774,8 @@ gimnasio_t* agregar_arch_gimnasio(heap_t* heap) {
 		scanf(" %s", arch_gym);
 		n = strlen(arch_gym);
 	}
-	gimnasio_t* nuevo_gym = cargar_gimnasio(arch_gym, heap);
-	return nuevo_gym;
+	if(cargar_gimnasio(arch_gym, heap) == ARCH_ACEPTADO_AUX) return ARCH_ACEPTADO_AUX;
+	return ARCH_NO_ACEPTADO_AUX;
 }
 
 void mostrar_gimnasio(heap_t* heap_gimnasio) { 
@@ -782,18 +814,21 @@ void mostrar_personaje_principal(personaje_t* personaje) {
 }
 
 void cambiar_pokemon_para_batalla(personaje_t* personaje) {
-	int posicion_uno;
-	int posicion_dos;
-	imprimir_modificacion_batalla(personaje);
-	printf("--->Ingrese la posicion del pokemon (de la lista de pokemones obtenidos) que desea para la batalla:\n");
-	scanf("%i", &posicion_uno);
-	verificar_posicion_uno(personaje, &posicion_uno);
-	printf("--->Ingrese la posicion del pokemon (de la lista de pokemones de batalla) que desea sacar de la batalla:\n");
-	scanf("%i", &posicion_dos);
-	verificar_posicion_dos(personaje, &posicion_dos);
-	lista_insertar_en_posicion(personaje->lista_pokemones_para_combatir, lista_elemento_en_posicion(personaje->lista_pokemones_obtenidos, posicion_uno), posicion_dos);
-	lista_borrar_de_posicion(personaje->lista_pokemones_para_combatir, posicion_dos+1);
-	imprimir_modificacion_batalla(personaje);
+	int posicion_uno = 0;
+	int posicion_dos = 0;
+	if(personaje->lista_pokemones_obtenidos->cantidad > CANT_MINIMA) { 
+		imprimir_modificacion_batalla(personaje);
+		printf("--->Ingrese la posicion del pokemon (de la lista de pokemones obtenidos) que desea para la batalla:\n");
+		scanf("%i", &posicion_uno);
+		verificar_posicion_uno(personaje, &posicion_uno);
+		printf("--->Ingrese la posicion del pokemon (de la lista de pokemones de batalla) que desea sacar de la batalla:\n");
+		scanf("%i", &posicion_dos);
+		verificar_posicion_dos(personaje, &posicion_dos);
+		lista_insertar_en_posicion(personaje->lista_pokemones_para_combatir, lista_elemento_en_posicion(personaje->lista_pokemones_obtenidos, posicion_uno), posicion_dos);
+		lista_borrar_de_posicion(personaje->lista_pokemones_para_combatir, posicion_dos+1);
+		imprimir_modificacion_batalla(personaje);
+	}
+	else printf(FONDO_NEGRO "AVISO: No tienes los suficientes pokemones para poder intercambiarlos..." NORMAL "\n");
 }
 
 int comenzar_batalla(heap_t* heap_gimnasio, personaje_t* personaje, bool simulacion, int* opcion_elegida) {
@@ -814,13 +849,13 @@ int comenzar_batalla(heap_t* heap_gimnasio, personaje_t* personaje, bool simulac
 			if((*opcion_elegida == FIN)||(turno_pkm_personaje >= personaje->lista_pokemones_para_combatir->cantidad)) derrota = true;
 		}
 		else {
-			mejorar_pokemon(lista_elemento_en_posicion(personaje->lista_pokemones_para_combatir,turno_pkm_entrenador));
+			mejorar_pokemon(lista_elemento_en_posicion(personaje->lista_pokemones_para_combatir,turno_pkm_personaje));
 			(turno_pkm_entrenador)++;
 		}
-		if((lista_elementos(lider_actual->lista_pokemones_para_combatir) == turno_pkm_entrenador) && (entrenadores_derrotados)){
+		if((entrenadores_derrotados) && (lista_elementos(lider_actual->lista_pokemones_para_combatir) == turno_pkm_entrenador)){
 			derrota = true;
 		}
-		if((!entrenadores_derrotados) && (turno_pkm_entrenador == entrenador_actual->lista_pokemones_para_combatir->cantidad)){
+		if((!entrenadores_derrotados) && ((turno_pkm_entrenador==entrenador_actual->lista_pokemones_para_combatir->cantidad))){
 			for(int j = 0 ; j < entrenador_actual->lista_pokemones_obtenidos->cantidad ; j++) {
 				free(lista_elemento_en_posicion(entrenador_actual->lista_pokemones_obtenidos,j));
 			}

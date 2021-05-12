@@ -58,10 +58,10 @@ int comparador_gimnasios(void* gym_1, void* gym_2);
 
 /*
 Pre: -
-Post: Agrega un gimnasio al heap a partir de un archivo de texto. Devuelve el gimnasio agregado.
+Post: Agrega un gimnasio al heap a partir de un archivo de texto. Devuelve 1 si pudo agregar por lo menos un gimnasio o 0 si no.
 */
 
-gimnasio_t* agregar_arch_gimnasio(heap_t* heap);
+int agregar_arch_gimnasio(heap_t* heap);
 
 /*
 Pre: -
@@ -87,6 +87,7 @@ void mostrar_personaje_principal(personaje_t* personaje);
 /*
 Pre: Recibe un personaje principal ya cargado al juego
 Post: Intercambia un "pokemon obtenido" del personaje principal con un "pokemon de batalla" del mismo, para que el primero pueda ser utilizado en las batallas
+El personaje deberá tener como minimo dos pokemones para que estos puedan intecambiarse. 
 */
 
 void cambiar_pokemon_para_batalla(personaje_t* personaje);

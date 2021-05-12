@@ -5,22 +5,13 @@
 
 #define VACIO 0
 
-lista_t* lista_crear() {
+// -----------------------------------------------------------------------------------
+// -----------------------------FUNCIONES PRIVADAS------------------------------------
+// -----------------------------------------------------------------------------------
 
-	lista_t* lista_nueva = NULL;
-	lista_nueva = malloc(sizeof(lista_t));
-	if(!lista_nueva) {
-		return NULL;
-	}
-	lista_nueva->nodo_inicio = NULL;
-	lista_nueva->nodo_fin = NULL;
-	lista_nueva->cantidad = 0;
-	return lista_nueva;
-
-}
-
-/* Pre: Recibe un elemento de tipo void*
-   Post: Devuelve el nodo que se creo o NULL en caso de error
+/* 
+Pre: Recibe un elemento de tipo void*
+Post: Devuelve el nodo que se creo o NULL en caso de error
 */
 
 nodo_t* nodo_crear(void* elemento) {
@@ -34,6 +25,40 @@ nodo_t* nodo_crear(void* elemento) {
 	nodo_t* nodo_siguiente = NULL;
 	nodo->siguiente = nodo_siguiente;
 	return nodo;
+
+}
+
+/* 
+Pre: Recibe un elemento de tipo nodo_t*
+Post: Libera la memoria reservada para los nodos creados 
+*/
+
+void nodo_destruir(nodo_t* nodo) {
+
+	if(!nodo) {
+		return;
+	}
+	nodo_t* nodo_siguiente = nodo->siguiente;
+	free(nodo);
+	nodo_destruir(nodo_siguiente);
+
+}
+
+// -----------------------------------------------------------------------------------
+// -----------------------------FUNCIONES PUBLICAS------------------------------------
+// -----------------------------------------------------------------------------------
+
+lista_t* lista_crear() {
+
+	lista_t* lista_nueva = NULL;
+	lista_nueva = malloc(sizeof(lista_t));
+	if(!lista_nueva) {
+		return NULL;
+	}
+	lista_nueva->nodo_inicio = NULL;
+	lista_nueva->nodo_fin = NULL;
+	lista_nueva->cantidad = 0;
+	return lista_nueva;
 
 }
 
@@ -249,21 +274,6 @@ int lista_desencolar(lista_t* lista) {
 void* lista_primero(lista_t* lista) {
 
 	return lista_elemento_en_posicion(lista, 0);
-
-}
-
-/* Pre: Recibe un elemento de tipo nodo_t*
-   Post: Libera la memoria reservada para los nodos creados 
-*/
-
-void nodo_destruir(nodo_t* nodo) {
-
-	if(!nodo) {
-		return;
-	}
-	nodo_t* nodo_siguiente = nodo->siguiente;
-	free(nodo);
-	nodo_destruir(nodo_siguiente);
 
 }
 
